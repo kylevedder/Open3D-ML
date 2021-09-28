@@ -134,9 +134,8 @@ class ObjdetAugmentation():
     """Class consisting different augmentation for Object Detection."""
 
     @staticmethod
-    def PointShuffle(data):
-        np.random.shuffle(data['point'])
-
+    def PointShuffle(data, key='point'):
+        np.random.shuffle(data[key])
         return data
 
     @staticmethod

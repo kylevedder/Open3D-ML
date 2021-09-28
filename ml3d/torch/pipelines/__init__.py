@@ -2,5 +2,6 @@
 
 from .semantic_segmentation import SemanticSegmentation
 from .object_detection import ObjectDetection
+from .contrastive_learning import ContrastiveLearning
 
-__all__ = ['SemanticSegmentation', 'ObjectDetection']
+__all__ = ['SemanticSegmentation', 'ObjectDetection', 'ContrastiveLearning']

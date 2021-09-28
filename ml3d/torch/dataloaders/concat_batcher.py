@@ -488,6 +488,41 @@ class ObjectDetectBatch:
                 self.bboxes[i] = self.bboxes[i].to(device)
 
 
+class ContrastiveBatch:
+
+    def __init__(self, batches):
+        """Initialize.
+
+        Args:
+            batches: A batch of data
+
+        Returns:
+            class: The corresponding class.
+        """
+        self.inputs = [
+            torch.tensor(e['data']['input'], dtype=torch.float32)
+            for e in batches
+        ]
+        self.pairs = [
+            torch.tensor(e['data']['pair'], dtype=torch.float32)
+            for e in batches
+        ]
+        self.negatives = [[
+            torch.tensor(e, dtype=torch.float32) for e in l['data']['negatives']
+        ] for l in batches]
+
+    def pin_memory(self):
+        self.inputs = [e.pin_memory() for e in self.inputs]
+        self.pairs = [e.pin_memory() for e in self.pairs]
+        self.negatives = [[e.pin_memory() for e in l] for l in self.negatives]
+        return self
+
+    def to(self, device):
+        self.inputs = [e.to(device) for e in self.inputs]
+        self.pairs = [e.to(device) for e in self.pairs]
+        self.negatives = [[e.to(device) for e in l] for l in self.negatives]
+
+
 class ConcatBatcher(object):
     """ConcatBatcher for KPConv."""
 
@@ -524,6 +559,9 @@ class ConcatBatcher(object):
         elif self.model == "PointPillars" or self.model == "PointRCNN":
             batching_result = ObjectDetectBatch(batches)
             return batching_result
+
+        elif self.model == "ContrastivePointPillars":
+            return ContrastiveBatch(batches)
 
         else:
             raise Exception(
